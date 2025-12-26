@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Dompet Anak Kos — Aplikasi Android Pencatat Keuangan Offline</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta name="description" content="Dompet Anak Kos adalah aplikasi Android sederhana untuk mencatat pemasukan dan pengeluaran harian anak kos secara cepat, ringan, dan bisa digunakan tanpa koneksi internet.">
+
+  <style>
+    /* ===== COLOR VARIABLES ===== */
+    :root {
+      --bg-global: #f4f4f5;
+      --bg-hero: #ffffff;
+      --bg-section: #f9fafb;
+      --bg-footer: #eeeeee;
+
+      --text-primary: #111111;
+      --text-secondary: #444444;
+      --text-muted: #666666;
+
+      --border-default: #dddddd;
+      --card-bg: #ffffff;
+    }
+
+    html[data-theme="dark"] {
+      --bg-global: #0f0f0f;
+      --bg-hero: #141414;
+      --bg-section: #181818;
+      --bg-footer: #121212;
+
+      --text-primary: #f5f5f5;
+      --text-secondary: #cccccc;
+      --text-muted: #aaaaaa;
+
+      --border-default: #2a2a2a;
+      --card-bg: #1e1e1e;
+    }
+
+    /* ===== RESET ===== */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background: var(--bg-global);
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+
+    h1, h2 {
+      margin-top: 0;
+      line-height: 1.3;
+    }
+
+    p {
+      margin: 0;
+      color: var(--text-secondary);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* ===== LAYOUT ===== */
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    /* ===== TOP BAR (SAMA DENGAN HOME) ===== */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: var(--bg-hero);
+      border-bottom: 1px solid var(--border-default);
+      z-index: 100;
+    }
+
+    .top-bar-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0.75rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo-img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--border-default);
+      object-fit: cover;
+    }
+
+    .theme-toggle {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    /* ===== HERO ===== */
+    header {
+    background: var(--bg-hero);
+    padding-top: 3.5rem;
+    }
+
+    .app-hero {
+    padding: 6rem 3rem;
+    }
+
+    .app-tagline {
+      margin-top: 0.75rem;
+      max-width: 120ch;
+    }
+
+    .download-button {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 10px;
+      border: 1px solid var(--text-primary);
+      background: var(--text-primary);
+      color: var(--bg-global);
+      font-weight: 500;
+    }
+
+    .download-button:hover {
+      background: transparent;
+      color: var(--text-primary);
+    }
+
+    /* ===== SCREENSHOT ===== */
+    .screenshot-section {
+      background: var(--bg-section);
+      padding: 4rem 3rem; 
+    }
+
+    .screenshot-row {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+    }
+    
+    .screenshot-row img {
+        width: 220px;
+        aspect-ratio: 9 / 16;
+        object-fit: cover;
+        border-radius: 12px;
+        border: 1px solid var(--border-default);
+        background: var(--card-bg);
+        flex-shrink: 0;
+    }
+
+    /* Scrollbar halus */
+    .screenshot-row::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    .screenshot-row::-webkit-scrollbar-thumb {
+        background: var(--border-default);
+        border-radius: 10px;
+    }
+
+    /* ===== LONG DESCRIPTION ===== */
+    .app-description {
+      background: var(--bg-section);
+      padding: 4rem 3rem; 
+    }
+
+    .app-description h2 {
+    margin-bottom: 1.5rem;
+    }
+
+    .app-description p,
+    .app-description ul,
+    .app-description ol {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    }
+
+    .app-description p + p {
+      margin-top: 1rem;
+    }
+
+    /* ===== FINAL CTA ===== */
+    .final-cta {
+      padding: 4rem 3rem; 
+      text-align: center;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--bg-footer);
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <div class="top-bar-inner">
+      <a href="https://itsngrh.github.io/home/">
+        <img src="https://raw.githubusercontent.com/itsNGRH/Identitas/main/Logo/LogoW.png"
+             alt="Logo NGRH"
+             class="logo-img">
+      </a>
+
+      <button id="themeToggle" class="theme-toggle" aria-label="Ganti mode warna">
+        🌙
+      </button>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <header>
+    <div class="container app-hero">
+      <h1>Dompet Anak Kos</h1>
+      <p class="app-tagline">
+        Aplikasi Android sederhana untuk mencatat pemasukan dan pengeluaran harian anak kos secara cepat dan offline.
+      </p>
+
+      <a
+        href="https://github.com/itsNGRH/Dompet-Anak-Kos/releases/download/latest/Dompet.Anak.Kos.apk"
+        class="download-button">
+        Unduh
+      </a>
+    </div>
+  </header>
+
+  <!-- SCREENSHOT -->
+  <section class="screenshot-section">
+    <div class="container">
+        <div class="screenshot-row">
+            <img src="https://raw.githubusercontent.com/itsNGRH/Dompet-Anak-Kos/main/Light%20Mode.png"
+                alt="Tampilan Dompet Anak Kos mode terang"
+                loading="lazy">
+
+            <img src="https://raw.githubusercontent.com/itsNGRH/Dompet-Anak-Kos/main/Dark%20Mode.png"
+                alt="Tampilan Dompet Anak Kos mode gelap"
+                loading="lazy">
+        </div>
+    </div>
+  </section>
+
+<!-- LONG DESCRIPTION -->
+<section class="app-description">
+  <div class="container">
+    <h2>Tentang Aplikasi</h2>
+    <p>
+    Dompet Anak Kos dibuat untuk menjawab masalah sederhana: pengeluaran kecil harian yang sering tidak terasa tapi cepat menghabiskan uang.
+    Aplikasi ini memungkinkan pengguna mencatat pemasukan dan pengeluaran secara cepat tanpa proses yang rumit.
+    </p>
+
+    <p>
+    Fokus utama aplikasi ini adalah membantu pengguna tetap sadar kondisi keuangan sehari-hari,
+    tanpa memaksa mereka mengatur keuangan secara detail atau teknis.
+    </p>
+
+    <p>
+    Dompet Anak Kos paling sering digunakan untuk mencatat pengeluaran makan atau jajan,
+    lalu mengecek ringkasan bulanan guna mengetahui sisa uang kos.
+    </p>
+
+    <p>
+    Beberapa batasan sengaja dipertahankan.
+    Aplikasi ini tidak menyediakan kategori kompleks, akun pengguna, sinkronisasi cloud,
+    atau grafik berat agar tetap ringan dan nyaman digunakan setiap hari.
+    </p>
+
+    <p>
+    Aplikasi ini cocok untuk anak kos, mahasiswa, dan pengguna pemula yang ingin mulai mengatur uang.
+    Tidak ditujukan untuk pengguna yang membutuhkan budgeting detail atau laporan keuangan lanjutan.
+    </p>
+    <br>
+    <h2>Untuk Siapa Dompet Anak Kos?</h2>
+    <p>Dompet Anak Kos dirancang untuk pengguna yang ingin mencatat pengeluaran harian secara sederhana tanpa perlu belajar sistem keuangan yang rumit.</p>
+    <ul>
+        <li>Anak kos yang ingin tahu ke mana uang bulanannya habis</li>
+        <li>Mahasiswa yang ingin mulai mencatat keuangan tanpa ribet</li>
+        <li>Pengguna yang hanya butuh catatan pemasukan dan pengeluaran sederhana</li>
+        <li>Pengguna yang sering tidak memiliki koneksi internet</li>
+    </ul>
+
+    <h2>Prinsip Desain Aplikasi</h2>
+    <ul>
+        <li>Fokus pada kebutuhan inti pengguna sehari-hari.</li>
+        <li>Interaksi cepat dengan langkah sesedikit mungkin.</li>
+        <li>Dapat digunakan sepenuhnya tanpa koneksi internet.</li>
+        <li>Tampilan sederhana dan mudah dipahami pengguna non-teknis.</li>
+        <li>Performa ringan agar nyaman dipakai setiap hari.</li>
+    </ul>
+
+    <h2>Cara Menggunakan Dompet Anak Kos</h2>
+    <p>Aplikasi ini dibuat agar bisa langsung digunakan tanpa pengaturan awal yang rumit.</p>
+    <ol>
+        <li>Unduh dan pasang aplikasi Dompet Anak Kos di perangkat Android.</li>
+        <li>Buka aplikasi dan langsung catat pemasukan atau pengeluaran harian.</li>
+        <li>Cek ringkasan bulanan untuk melihat sisa uang.</li>
+        <li>Semua data tersimpan di perangkat dan tidak memerlukan internet.</li>
+    </ol>
+
+    <h2>Pertanyaan yang Sering Diajukan</h2>
+
+    <h3>Apakah Dompet Anak Kos bisa digunakan tanpa internet?</h3>
+    <p>Ya. Semua fitur Dompet Anak Kos dapat digunakan sepenuhnya tanpa koneksi internet.</p>
+
+    <h3>Apakah aplikasi ini gratis?</h3>
+    <p>Dompet Anak Kos dapat digunakan secara gratis tanpa akun dan tanpa langganan.</p>
+
+    <h3>Apakah data keuangan saya aman?</h3>
+    <p>Data disimpan langsung di perangkat pengguna dan tidak dikirim ke server mana pun.</p>
+    
+  </div>
+</section>
+
+  <!-- FINAL CTA -->
+  <section class="final-cta">
+    <div class="container">
+      <a
+        href="https://github.com/itsNGRH/Dompet-Anak-Kos/releases/download/latest/Dompet.Anak.Kos.apk"
+        class="download-button">
+        Unduh
+      </a>
+      <h3>Tentang Pengembang</h3>
+    <p>Dompet Anak Kos dikembangkan oleh NGRH, pembuat aplikasi Android independen yang fokus membuat aplikasi sederhana, ringan, dan dapat digunakan tanpa koneksi internet.</p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    © 2025 NGRH
+  </footer>
+
+  <!-- THEME SCRIPT -->
+  <script>
+    const toggle = document.getElementById('themeToggle');
+    const root = document.documentElement;
+
+    const saved = localStorage.getItem('theme');
+    if (saved) {
+      root.setAttribute('data-theme', saved);
+      toggle.textContent = saved === 'dark' ? '☀️' : '🌙';
+    }
+
+    toggle.addEventListener('click', () => {
+      const isDark = root.getAttribute('data-theme') === 'dark';
+      const next = isDark ? 'light' : 'dark';
+
+      root.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      toggle.textContent = next === 'dark' ? '☀️' : '🌙';
+    });
+  </script>
+
+</body>
+</html>

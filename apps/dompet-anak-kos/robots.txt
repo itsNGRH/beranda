@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://itsngrh.github.io/home/sitemap.xml
