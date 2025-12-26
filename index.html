@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>NGRH</title> 
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    /* ===== COLOR VARIABLES ===== */
+    :root {
+      --bg-global: #f4f4f5;
+      --bg-hero: #ffffff;
+      --bg-projects: #f9fafb;
+      --bg-footer: #eeeeee;
+
+      --text-primary: #111111;
+      --text-secondary: #444444;
+      --text-muted: #555555;
+
+      --border-default: #dddddd;
+      --card-bg: #ffffff;
+    }
+
+    /* ===== TOP BAR ===== */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 100;
+      background-color: var(--bg-hero);
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .top-bar-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0.75rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* ===== LOGO IMAGE ===== */
+    .logo-link {
+      display: inline-block;
+    }
+
+    .logo-link:hover .logo-img {
+      opacity: 0.85;
+    }
+
+    .logo-img {
+      height: 32px;
+      width: 32px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 1px solid var(--border-default);
+    }
+
+    /* ===== THEME TOGGLE ===== */
+    .theme-toggle {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: var(--text-primary);
+      line-height: 1;
+    }
+
+    .theme-toggle:hover {
+      opacity: 0.7;
+    }
+
+    html[data-theme="dark"] {
+      --bg-global: #0f0f0f;
+      --bg-hero: #141414;
+      --bg-projects: #181818;
+      --bg-footer: #121212;
+
+      --text-primary: #f5f5f5;
+      --text-secondary: #cccccc;
+      --text-muted: #aaaaaa;
+
+      --border-default: #2a2a2a;
+      --card-bg: #1e1e1e;
+    }
+
+    /* ===== RESET ===== */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background: var(--bg-global);
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+
+    p { margin: 0; color: var(--text-secondary); }
+
+    /* ===== LAYOUT ===== */
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    /* ===== HERO ===== */
+    header { 
+      background: var(--bg-hero);
+      padding-top: 3.5rem;
+    }
+
+    .hero {
+      min-height: 100vh;
+      padding: 6rem 3rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .hero-description {
+      max-width: 60ch;
+      margin-top: 1rem;
+    }
+
+    /* ===== PROJECTS ===== */
+    main { background: var(--bg-projects); }
+
+    .projects {
+      padding: 4rem 3rem;
+    }
+
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-top: 2.5rem;
+    }
+
+    .project-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-default);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      max-width: 270px;
+      transition: transform 0.15s ease, box-shadow 0.15s;
+    }
+
+    .project-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    }
+
+      .project-content h3 {
+        margin-bottom: 0.25rem;
+      }
+
+    /* ===== MEDIA STACK ===== */
+    .media-wrapper {
+      position: relative;
+      padding: 1rem;
+    }
+
+    .media-stack {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 9 / 16;
+    }
+
+    .media-stack img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .media-stack img.active {
+      opacity: 1;
+    }
+
+    .media-nav {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    .media-nav button {
+      pointer-events: all;
+      background: rgba(0,0,0,0.4);
+      color: #fff;
+      border: none;
+      font-size: 1.1rem;
+      font-weight: 700;
+      padding: 0.4rem 0.6rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .media-nav button:hover {
+      background: rgba(0,0,0,0.6);
+    }
+
+    /* ===== MEDIA INDICATOR ===== */
+    .media-indicator {
+      position: absolute;
+      bottom: 0.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 0.4rem;
+    }
+
+    .media-indicator .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    .media-indicator .dot.active {
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    /* ===== CONTENT ===== */
+    .project-content {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .project-content p {
+      margin-top: 0.5rem;
+      flex: 1;
+    }
+
+    .download-button {
+      margin-top: 1rem;
+      padding: 0.55rem 1rem;
+      border-radius: 10px;
+      border: 1px solid var(--text-primary);
+      background-color: var(--text-primary);
+      text-decoration: none;
+      color: var(--bg-global);
+      font-size: 0.9rem;
+      font-weight: 500;
+      align-self: flex-start;
+    }
+
+    .download-button:hover {
+      background-color: transparent;
+      color: var(--text-primary);
+    }
+
+    /* ===== FOOTER ===== */
+    footer { background: var(--bg-footer); }
+
+    .footer {
+      padding: 1rem 0;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* ===== KEYBOARD FOCUS ===== */
+    button:focus-visible,
+    a:focus-visible {
+      outline: 2px solid var(--text-primary);
+      outline-offset: 2px;
+    }
+
+  </style>
+</head>
+<body>
+    <!-- THEME TOGGLE -->
+    <div class="top-bar">
+      <div class="top-bar-inner">
+
+        <!-- Logo NGRH -->
+        <a href="#" class="logo-link">
+          <img
+            src="https://raw.githubusercontent.com/itsNGRH/Identitas/main/Logo/LogoW.png"
+            alt="Logo NGRH"
+            class="logo-img"
+            loading="lazy"
+            decoding="async">
+        </a>
+
+        <!-- Theme Toggle -->
+        <button
+          class="theme-toggle"
+          id="themeToggle"
+          aria-label="Ganti mode warna"
+          aria-pressed="false">
+          🌙
+        </button>
+
+      </div>
+    </div>
+    </div>
+
+  <!-- HERO -->
+  <header>
+    <div class="container hero">
+      <div>
+        <h1>NGRH</h1>
+        <p class="hero-description">
+          Developer indie yang berfokus pada pembuatan aplikasi android yang ringan, cepat, dan mudah dipelihara.
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <!-- PROJECTS -->
+  <main>
+    <section class="container projects">
+      <h2>Aplikasi</h2>
+
+      <div class="project-grid">
+
+        <!-- CARD 1 -->
+        <article class="project-card">
+          <div class="media-wrapper">
+            <div class="media-stack">
+              <img src="https://raw.githubusercontent.com/itsNGRH/Dompet-Anak-Kos/main/Light%20Mode.png" class="active" loading="lazy" decoding="async">
+              <img src="https://raw.githubusercontent.com/itsNGRH/Dompet-Anak-Kos/main/Dark%20Mode.png">
+            </div>
+            <div class="media-nav">
+              <button data-dir="prev" aria-label="Gambar sebelumnya"><</button>
+              <button data-dir="next" aria-label="Gambar berikutnya">></button>
+            </div>
+          </div>
+          <div class="project-content">
+            <h3>Dompet Anak Kos</h3>
+            <p>Aplikasi Android sederhana untuk mencatat pemasukan dan pengeluaran harian anak kos secara cepat dan offline.</p>
+            <a href="https://github.com/itsNGRH/Dompet-Anak-Kos/releases/download/latest/Dompet.Anak.Kos.apk" class="download-button">Unduh</a>
+          </div>
+        </article>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container footer">
+      <p>© 2025 NGRH</p>
+    </div>
+  </footer>
+
+  <!-- SLIDER SCRIPT -->
+  <script>
+    document.querySelectorAll('.project-card').forEach(card => {
+    const images = card.querySelectorAll('.media-stack img');
+    const navButtons = card.querySelectorAll('.media-nav button');
+    let index = 0;
+
+    // Jika hanya 1 gambar, matikan navigasi
+    if (images.length <= 1) {
+      navButtons.forEach(btn => btn.style.display = 'none');
+      images[0]?.classList.add('active');
+      return;
+    }
+
+    // Buat indikator dot secara otomatis
+    const indicator = document.createElement('div');
+    indicator.className = 'media-indicator';
+
+    images.forEach((_, i) => {
+      const dot = document.createElement('span');
+      dot.className = 'dot' + (i === 0 ? ' active' : '');
+      indicator.appendChild(dot);
+    });
+
+    card.querySelector('.media-wrapper').appendChild(indicator);
+    const dots = indicator.querySelectorAll('.dot');
+
+    // Navigasi
+    navButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        images[index].classList.remove('active');
+        dots[index].classList.remove('active');
+
+        index += btn.dataset.dir === 'next' ? 1 : -1;
+        if (index < 0) index = images.length - 1;
+        if (index >= images.length) index = 0;
+
+        images[index].classList.add('active');
+        dots[index].classList.add('active');
+      });
+    });
+  });
+    
+    const toggle = document.getElementById('themeToggle');
+    const root = document.documentElement;
+
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        root.setAttribute('data-theme', savedTheme);
+        toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+        toggle.setAttribute('aria-pressed', savedTheme === 'dark');
+    }
+
+    toggle.addEventListener('click', () => {
+        const isDark = root.getAttribute('data-theme') === 'dark';
+        const nextTheme = isDark ? 'light' : 'dark';
+
+        root.setAttribute('data-theme', nextTheme);
+        localStorage.setItem('theme', nextTheme);
+        toggle.textContent = nextTheme === 'dark' ? '☀️' : '🌙';
+        toggle.setAttribute('aria-pressed', nextTheme === 'dark');
+    });
+    </script>
+
+
+</body>
+</html>
